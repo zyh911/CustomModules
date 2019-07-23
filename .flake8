@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 120
+enable-extensions = E123,E133,E241,E242,E704,W505
+exclude = venv,.pytest_cache,build,.git,__pycache__
