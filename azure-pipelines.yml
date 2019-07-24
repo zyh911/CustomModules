@@ -13,13 +13,13 @@ steps:
 
 - script: |
    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-   python get-pip.py
-   pip install pylint flake8'
+   python3 get-pip.py
+   pip3 install pylint flake8'
   displayName: 'Install Python dependencies'
 
 - script: |
-   python -m pylint --version
-   python -m pylint azureml --errors-only
+   python3 -m pylint --version
+   python3 -m pylint azureml --errors-only
   displayName: PyLint
 
 - script: |
