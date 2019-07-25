@@ -7,19 +7,20 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: AzureML Linux
+  variables:
+    python.version: '3.6.8'
 
 steps:
-
 - script: |
    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-   python3 get-pip.py --user
-   pip3 install pylint flake8 --user
+   python get-pip.py
+   pip3 install pylint flake8
   displayName: 'Install Python dependencies'
 
 - script: |
-   python3 -m pylint --version
-   python3 -m pylint azureml --errors-only
+   python -m pylint --version
+   python -m pylint azureml --errors-only
   displayName: PyLint
 
 - script: |
