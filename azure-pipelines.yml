@@ -7,15 +7,19 @@ trigger:
 - master
 
 pool:
-  name: AzureML Linux
-  variables:
-    python.version: '3.6.8'
+  name: ubuntu-16.04
 
 steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.6.8' 
+    addToPath: true 
+    #architecture: 'x64' # Options: x86, x64 (this argument applies only on Windows agents)
+
 - script: |
    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
    python get-pip.py
-   pip3 install pylint flake8
+   pip install pylint flake8
   displayName: 'Install Python dependencies'
 
 - script: |
