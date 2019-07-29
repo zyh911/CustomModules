@@ -17,7 +17,7 @@ def serialize_result(raw_text_list, y_list):
         for e in entities:
             entity_label = e[0]
             if entity_label not in set(['PER', 'ORG', 'LOC', 'MISC']):
-                continue           
+                continue
             start_index = e[1]
             end_index = e[2] + 1
             entity_name = ' '.join(text_list[start_index: end_index])
@@ -42,10 +42,11 @@ def save_as_df(output_df, output_eval_dir):
         if not os.path.exists(output_eval_dir):
             os.makedirs(output_eval_dir)
         pred_label_list = output_df['PredictedLabel'].tolist()
-        final_df = pd.DataFrame({'Text': output_df['Text'].tolist(), 'PredictedLabel': [json.dumps(p_dict) for p_dict in pred_label_list]})
+        final_df = pd.DataFrame({'Text': output_df['Text'].tolist(),
+                                 'PredictedLabel': [json.dumps(p_dict) for p_dict in pred_label_list]})
         print(final_df)
         final_df.to_parquet(fname=os.path.join(output_eval_dir, "prediction.parquet"), engine='pyarrow')
-        
+
 
 def get_metrics(y_true, y_pred, suffix=False):
     true_entities = set(get_entities(y_true, suffix))

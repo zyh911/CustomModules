@@ -36,7 +36,7 @@ class Ner:
         self.label_map = self.model_config["label_map"]
         self.max_seq_length = self.model_config["max_seq_length"]
 
-        self.label_map = {int(k):v for k,v in self.label_map.items()}
+        self.label_map = {int(k): v for k, v in self.label_map.items()}
         self.model.eval()
         if self.local_rank == -1 or self.no_cuda:
             self.device = torch.device("cuda" if torch.cuda.is_available() and not self.no_cuda else "cpu")
