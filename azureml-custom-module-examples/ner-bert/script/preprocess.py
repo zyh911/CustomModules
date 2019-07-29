@@ -266,6 +266,7 @@ def convert_examples_to_features_no_label(examples, max_seq_length, tokenizer):
 
     return df_feature
 
+
 class PreProcess:
     def __init__(self, meta: dict = {}):
         self.bert_model = str(meta.get('BERT pretrained model', 'bert-base-cased'))
