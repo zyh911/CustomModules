@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import scikitplot as skplt
 import matplotlib.pyplot as plt
 import os
 import json
@@ -165,4 +164,3 @@ def plot(y_true, y_pred, output_eval_dir):
     plt.xlabel('Name Entity Type')
     run.log_image("metrics/ground_truth", plot=gt_plt)
     gt_plt.savefig(os.path.join(output_eval_dir, 'ground_truth.png'))
-    # plt.show()

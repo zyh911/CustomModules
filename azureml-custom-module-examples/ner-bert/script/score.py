@@ -211,5 +211,3 @@ if __name__ == "__main__":
     }
     with open(os.path.join(args.output_eval_dir, 'data_type.json'), 'w') as f:
         json.dump(dct, f)
-
-
