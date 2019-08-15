@@ -1,11 +1,12 @@
 import os
-import json
 import fire
 import pandas as pd
 import base64
 from azureml.studio.modulehost.handler.port_io_handler import OutputHandler
 from azureml.studio.common.datatypes import DataTypes
 from azureml.studio.common.datatable.data_table import DataTable
+
+from .smt_fake import smt_fake_file
 
 
 def entrance(data_path='script/test_data', save_path='script/outputs'):
@@ -29,24 +30,7 @@ def entrance(data_path='script/test_data', save_path='script/outputs'):
     OutputHandler.handle_output(data=dt, file_path=save_path,
                                 file_name='data.dataset.parquet', data_type=DataTypes.DATASET)
 
-    # Dump data_type.json as a work around until SMT deploys
-    dct = {
-        'Id': 'Dataset',
-        'Name': 'Dataset .NET file',
-        'ShortName': 'Dataset',
-        'Description': 'A serialized DataTable supporting partial reads and writes',
-        'IsDirectory': False,
-        'Owner': 'Microsoft Corporation',
-        'FileExtension': 'dataset.parquet',
-        'ContentType': 'application/octet-stream',
-        'AllowUpload': False,
-        'AllowPromotion': True,
-        'AllowModelPromotion': False,
-        'AuxiliaryFileExtension': None,
-        'AuxiliaryContentType': None
-    }
-    with open(os.path.join(save_path, 'data_type.json'), 'w') as f:
-        json.dump(dct, f)
+    smt_fake_file(save_path)
 
     print('This experiment has been completed.')
 

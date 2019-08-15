@@ -1,5 +1,4 @@
 import os
-import json
 import fire
 import pandas as pd
 from azureml.studio.modulehost.handler.port_io_handler import OutputHandler
@@ -10,6 +9,7 @@ import torch
 from torchvision import datasets, transforms
 
 from .densenet import densenet201, densenet169, densenet161, densenet121, MyDenseNet
+from .smt_fake import smt_fake_file
 from .index_to_label import my_dict
 from .imagenet1000_label_to_index import new_dict
 
@@ -114,24 +114,7 @@ def test(compared_model_path='script/saved_model', model_path='script/saved_mode
     cscore = CScore(compared_model_path, model_path, meta)
     cscore.evaluate(data_path=data_path, save_path=save_path)
 
-    # Dump data_type.json as a work around until SMT deploys
-    dct = {
-        'Id': 'Dataset',
-        'Name': 'Dataset .NET file',
-        'ShortName': 'Dataset',
-        'Description': 'A serialized DataTable supporting partial reads and writes',
-        'IsDirectory': False,
-        'Owner': 'Microsoft Corporation',
-        'FileExtension': 'dataset.parquet',
-        'ContentType': 'application/octet-stream',
-        'AllowUpload': False,
-        'AllowPromotion': True,
-        'AllowModelPromotion': False,
-        'AuxiliaryFileExtension': None,
-        'AuxiliaryContentType': None
-    }
-    with open(os.path.join(save_path, 'data_type.json'), 'w') as f:
-        json.dump(dct, f)
+    smt_fake_file(save_path)
 
     print('This experiment has been completed.')
 

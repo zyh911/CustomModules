@@ -1,11 +1,12 @@
 import os
-import json
 import fire
 import pandas as pd
 import pyarrow.parquet as pq  # noqa: F401
 from azureml.studio.modulehost.handler.port_io_handler import OutputHandler
 from azureml.studio.common.datatypes import DataTypes
 from azureml.studio.common.datatable.data_table import DataTable
+
+from .smt_fake import smt_fake_file
 
 
 class Postprocess:
@@ -48,24 +49,7 @@ def test(file_path='script', data_path='script/outputs2', save_path='script/outp
     postprocess = Postprocess(file_path)
     postprocess.evaluate(data_path=data_path, save_path=save_path)
 
-    # Dump data_type.json as a work around until SMT deploys
-    dct = {
-        'Id': 'Dataset',
-        'Name': 'Dataset .NET file',
-        'ShortName': 'Dataset',
-        'Description': 'A serialized DataTable supporting partial reads and writes',
-        'IsDirectory': False,
-        'Owner': 'Microsoft Corporation',
-        'FileExtension': 'dataset.parquet',
-        'ContentType': 'application/octet-stream',
-        'AllowUpload': False,
-        'AllowPromotion': True,
-        'AllowModelPromotion': False,
-        'AuxiliaryFileExtension': None,
-        'AuxiliaryContentType': None
-    }
-    with open(os.path.join(save_path, 'data_type.json'), 'w') as f:
-        json.dump(dct, f)
+    smt_fake_file(save_path)
 
 
 if __name__ == '__main__':
