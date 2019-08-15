@@ -1,12 +1,12 @@
 import os
 import time
-import json
 import fire
 
 import torch
 from torchvision import datasets, transforms
 
 from .densenet import DenseNet
+from .smt_fake import smt_fake_model
 
 
 class AverageMeter(object):
@@ -245,28 +245,8 @@ def entrance(data_path='dataset', save_path='saved_model', model_depth=100, grow
           growth_rate=growth_rate, block_config=block_config, num_classes=10,
           memory_efficient=memory_efficient)
 
-    # Dump data_type.json as a work around until SMT deploys
-    dct = {
-        'Id': 'ILearnerDotNet',
-        'Name': 'ILearner .NET file',
-        'ShortName': 'Model',
-        'Description': 'A .NET serialized ILearner',
-        'IsDirectory': False,
-        'Owner': 'Microsoft Corporation',
-        'FileExtension': 'ilearner',
-        'ContentType': 'application/octet-stream',
-        'AllowUpload': False,
-        'AllowPromotion': False,
-        'AllowModelPromotion': True,
-        'AuxiliaryFileExtension': None,
-        'AuxiliaryContentType': None
-    }
-    with open(os.path.join(save_path, 'data_type.json'), 'w') as f:
-        json.dump(dct, f)
-    # Dump data.ilearner as a work around until data type design
-    visualization = os.path.join(save_path, 'data.ilearner')
-    with open(visualization, 'w') as file:
-        file.writelines('{}')
+    smt_fake_model(save_path)
+
     print('This experiment has been completed.')
 
 
