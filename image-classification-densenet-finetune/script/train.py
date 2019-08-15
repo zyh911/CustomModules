@@ -224,16 +224,6 @@ def entrance(model_path='script/saved_model', data_path='script/dataset/dog_trai
     ])
 
     train_set = datasets.ImageFolder(data_path, transform=train_transforms)
-    # my_list = train_set.classes
-    # with open('script/dog120_index_to_label.py', 'w') as f:
-    #     f.write('my_dict = {\n')
-    #     for i in range(len(my_list)):
-    #         name = my_list[i]
-    #         names = name.split('-', 1)
-    #         names2 = names[-1].split('_')
-    #         final_str = ' '.join(names2)
-    #         f.write('    {}: \'{}\',\n'.format(i, final_str))
-    #     f.write('}\n')
     test_set = datasets.ImageFolder(data_path, transform=test_transforms)
     indices = torch.randperm(len(train_set))
     test_size = len(train_set) // 10
