@@ -1,4 +1,5 @@
 import os
+import json
 import fire
 import pandas as pd
 import pyarrow.parquet as pq  # noqa: F401
@@ -11,18 +12,11 @@ from .smt_fake import smt_fake_file
 
 class Postprocess:
     def __init__(self, file_path, meta={}):
-        file_name = os.path.join(file_path, 'index_to_label.py')
+        file_name = os.path.join(file_path, 'index_to_label.json')
 
-        self.classes = {}
+        self.classes = []
         with open(file_name) as f:
-            for line in f.readlines():
-                if line[0] == ' ':
-                    my_list = line.split(':')
-                    my_index = int(my_list[0].strip())
-                    my_list2 = my_list[1].split('\'')
-                    if len(my_list2) != 3:
-                        my_list2 = my_list[1].split('"')
-                    self.classes[my_index] = my_list2[1]
+            self.classes = json.load(f)
 
     def run(self, input, meta=None):
         my_list = []

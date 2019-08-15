@@ -10,7 +10,6 @@ from torchvision import datasets, transforms
 
 from .densenet import densenet201, densenet169, densenet161, densenet121, MyDenseNet
 from .smt_fake import smt_fake_file
-from .index_to_label import my_dict
 from .imagenet1000_label_to_index import new_dict
 
 
@@ -55,7 +54,6 @@ class CScore:
 
         self.model.eval()
         self.cmodel.eval()
-        self.classes = my_dict
 
     def _evaluate_with_label(self, data_path):
         test_set = datasets.ImageFolder(data_path, transform=self.inference_transforms)
