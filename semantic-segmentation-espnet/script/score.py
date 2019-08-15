@@ -1,5 +1,4 @@
 import os
-import json
 import numpy as np
 from PIL import Image
 from io import BytesIO
@@ -14,6 +13,7 @@ from azureml.studio.common.datatable.data_table import DataTable
 import torch
 from torchvision import transforms
 from .Model import ESPNet_Encoder, ESPNet
+from .smt_fake import smt_fake_file
 
 
 class Score:
@@ -120,24 +120,7 @@ def test(args):
     score = Score(args.model_path, meta)
     score.evaluate(data_path=args.data_path, save_path=args.save_path)
 
-    # Dump data_type.json as a work around until SMT deploys
-    dct = {
-        'Id': 'Dataset',
-        'Name': 'Dataset .NET file',
-        'ShortName': 'Dataset',
-        'Description': 'A serialized DataTable supporting partial reads and writes',
-        'IsDirectory': False,
-        'Owner': 'Microsoft Corporation',
-        'FileExtension': 'dataset.parquet',
-        'ContentType': 'application/octet-stream',
-        'AllowUpload': False,
-        'AllowPromotion': True,
-        'AllowModelPromotion': False,
-        'AuxiliaryFileExtension': None,
-        'AuxiliaryContentType': None
-    }
-    with open(os.path.join(args.save_path, 'data_type.json'), 'w') as f:
-        json.dump(dct, f)
+    smt_fake_file(args.save_path)
 
 
 if __name__ == '__main__':

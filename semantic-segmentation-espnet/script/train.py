@@ -2,7 +2,6 @@ import os
 import pickle
 import time
 from argparse import ArgumentParser
-import json
 
 import torch
 import torch.optim.lr_scheduler
@@ -14,6 +13,7 @@ from .Criteria import CrossEntropyLoss2d
 import script.Transforms as myTransforms
 from .DataSet import MyDataset
 from .IOUEval import iouEval
+from .smt_fake import smt_fake_model
 
 
 def val(args, val_loader, model, criterion):
@@ -315,28 +315,9 @@ def trainValidateSegmentation(args):
         print("\nEpoch No.: %d\tTrain Loss = %.4f\tVal Loss = %.4f\t mIOU(tr) = %.4f\t mIOU(val) = %.4f"
               % (epoch, lossTr, lossVal, mIOU_tr, mIOU_val))
     logger.close()
-    # Dump data_type.json as a work around until SMT deploys
-    dct = {
-        'Id': 'ILearnerDotNet',
-        'Name': 'ILearner .NET file',
-        'ShortName': 'Model',
-        'Description': 'A .NET serialized ILearner',
-        'IsDirectory': False,
-        'Owner': 'Microsoft Corporation',
-        'FileExtension': 'ilearner',
-        'ContentType': 'application/octet-stream',
-        'AllowUpload': False,
-        'AllowPromotion': False,
-        'AllowModelPromotion': True,
-        'AuxiliaryFileExtension': None,
-        'AuxiliaryContentType': None
-    }
-    with open(os.path.join(args.save_path, 'data_type.json'), 'w') as f:
-        json.dump(dct, f)
-    # Dump data.ilearner as a work around until data type design
-    visualization = os.path.join(args.save_path, 'data.ilearner')
-    with open(visualization, 'w') as file:
-        file.writelines('{}')
+
+    smt_fake_model(args.save_path)
+
     print('This experiment has been completed.')
 
 
