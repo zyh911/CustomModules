@@ -69,7 +69,7 @@ implementation:
     - --model_path
     - inputValue: Model path
     - --data_path
-    - inputValue: Data Path
+    - inputValue: Data path
     - --pretrained
     - inputValue: Pretrained
     - --learning_rate
