@@ -11,7 +11,7 @@ inputs:
     - 'deeplabv3_resnet101'
     - 'fcn_resnet101'
 - name: Data path
-  type: TabularDataFolder
+  type: GenericFolder
   port: True
   description: data_path
 - name: Pretrained
