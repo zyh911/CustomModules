@@ -1,77 +1,68 @@
 import os
+import sys
 
 import torch
-from torchvision.models.segmentation.segmentation import _segm_resnet
+import torch.nn as nn
+from torchvision.models.segmentation.segmentation import _segm_resnet, model_urls
+try:
+    from torch.hub import load_state_dict_from_url
+except ImportError:
+    from torch.utils.model_zoo import load_url as load_state_dict_from_url
 
 
-__all__ = ['fcn_resnet50', 'fcn_resnet101', 'deeplabv3_resnet50', 'deeplabv3_resnet101']
+__all__ = ['SegmentationNet']
 
 
-model_urls = {
-    'fcn_resnet50_coco': None,
-    'fcn_resnet101_coco': 'fcn_resnet101_coco-7ecb50ca.pth',
-    'deeplabv3_resnet50_coco': None,
-    'deeplabv3_resnet101_coco': 'deeplabv3_resnet101_coco-586e9e4e.pth',
-}
-
-
-def _load_model(arch_type, backbone, model_path, pretrained, num_classes, **kwargs):
+def load_model(arch_type, backbone, model_path, pretrained, num_classes, **kwargs):
     aux_loss = True
-    model = _segm_resnet(arch_type, backbone, num_classes, aux_loss, **kwargs)
+    temp_arch_type = arch_type
+    if temp_arch_type == 'deeplabv3':
+        temp_arch_type = temp_arch_type[:-2]
+    model = _segm_resnet(temp_arch_type, backbone, num_classes, aux_loss, **kwargs)
     if pretrained:
         arch = arch_type + '_' + backbone + '_coco'
-        model_url = os.path.join(model_path, model_urls[arch])
+        model_url = model_urls[arch]
         if model_url is None:
             raise NotImplementedError('pretrained {} is not supported as of now'.format(arch))
         else:
-            state_dict = torch.load(model_url)
+            state_dict = load_state_dict_from_url(model_url, model_dir=model_path)
             model.load_state_dict(state_dict)
     return model
 
 
-def fcn_resnet50(model_path='script/saved_model', pretrained=False,
-                 num_classes=21, **kwargs):
-    """Constructs a Fully-Convolutional Network model with a ResNet-50 backbone.
-    Args:
-        model_path (str): Model path string
-        pretrained (bool): If True, returns a model pre-trained on COCO train2017 which
-            contains the same classes as Pascal VOC
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _load_model('fcn', 'resnet50', model_path, pretrained, num_classes, **kwargs)
+class SegmentationFuncs:
+
+    @staticmethod
+    def fcn_resnet50(model_path='script/saved_model', pretrained=False,
+                     num_classes=21, **kwargs):
+        return load_model('fcn', 'resnet50', model_path, pretrained, num_classes, **kwargs)
+
+    @staticmethod
+    def fcn_resnet101(model_path='script/saved_model', pretrained=False,
+                      num_classes=21, **kwargs):
+        return load_model('fcn', 'resnet101', model_path, pretrained, num_classes, **kwargs)
+
+    @staticmethod
+    def deeplabv3_resnet50(model_path='script/saved_model', pretrained=False,
+                           num_classes=21, **kwargs):
+        return load_model('deeplabv3', 'resnet50', model_path, pretrained, num_classes, **kwargs)
+
+    @staticmethod
+    def deeplabv3_resnet101(model_path='script/saved_model', pretrained=False,
+                            num_classes=21, **kwargs):
+        return load_model('deeplabv3', 'resnet101', model_path, pretrained, num_classes, **kwargs)
 
 
-def fcn_resnet101(model_path='script/saved_model', pretrained=False,
-                  num_classes=21, **kwargs):
-    """Constructs a Fully-Convolutional Network model with a ResNet-101 backbone.
-    Args:
-        model_path (str): Model path string
-        pretrained (bool): If True, returns a model pre-trained on COCO train2017 which
-            contains the same classes as Pascal VOC
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _load_model('fcn', 'resnet101', model_path, pretrained, num_classes, **kwargs)
+class SegmentationNet(nn.Module):
+    def __init__(self, model_type='deeplabv3_resnet101', model_path=None, pretrained=True, num_classes=21):
+        super().__init__()
+        net_func = getattr(SegmentationFuncs, model_type, None)
 
+        if net_func is None:
+            print(f'Error: No such pretrained model {model_type}')
+            sys.exit()
 
-def deeplabv3_resnet50(model_path='script/saved_model', pretrained=False,
-                       num_classes=21, **kwargs):
-    """Constructs a DeepLabV3 model with a ResNet-50 backbone.
-    Args:
-        model_path (str): Model path string
-        pretrained (bool): If True, returns a model pre-trained on COCO train2017 which
-            contains the same classes as Pascal VOC
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _load_model('deeplabv3', 'resnet50', model_path, pretrained, num_classes, **kwargs)
+        self.model = net_func(pretrained=pretrained, model_path=model_path, num_classes=num_classes)
 
-
-def deeplabv3_resnet101(model_path='script/saved_model', pretrained=False,
-                        num_classes=21, **kwargs):
-    """Constructs a DeepLabV3 model with a ResNet-101 backbone.
-    Args:
-        model_path (str): Model path string
-        pretrained (bool): If True, returns a model pre-trained on COCO train2017 which
-            contains the same classes as Pascal VOC
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _load_model('deeplabv3', 'resnet101', model_path, pretrained, num_classes, **kwargs)
+    def forward(self, input):
+        return self.model(input)

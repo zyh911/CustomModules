@@ -10,10 +10,30 @@ inputs:
   options:
     - 'deeplabv3_resnet101'
     - 'fcn_resnet101'
-- name: Model path
-  type: ModelFolder
+- name: Data path
+  type: TabularDataFolder
   port: True
-  description: model_path
+  description: data_path
+- name: Pretrained
+  type: Boolean
+  default: True
+  description: pretrained
+- name: Learning rate
+  type: Float
+  default: 0.0001
+  description: learning_rate
+- name: Epochs
+  type: Int
+  default: 10
+  description: epochs
+- name: Batch size
+  type: Int
+  default: 4
+  description: batch_size
+- name: Use CUDA
+  type: Boolean
+  default: False
+  description: use_cuda
 outputs:
 - name: Save path
   type: ModelFolder
@@ -44,5 +64,17 @@ implementation:
     - inputValue: Model type
     - --model_path
     - inputValue: Model path
+    - --data_path
+    - inputValue: Data Path
+    - --pretrained
+    - inputValue: Pretrained
+    - --learning_rate
+    - inputValue: Learning rate
+    - --epochs
+    - inputValue: Epochs
+    - --batch_size
+    - inputValue: Batch size
+    - --use_cuda
+    - inputValue: Use CUDA
     - --save_path
     - outputPath: Save path
