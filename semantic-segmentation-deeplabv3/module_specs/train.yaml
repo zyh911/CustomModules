@@ -10,6 +10,10 @@ inputs:
   options:
     - 'deeplabv3_resnet101'
     - 'fcn_resnet101'
+- name: Model path
+  type: ModelFolder
+  port: True
+  description: model_path
 - name: Data path
   type: GenericFolder
   port: True
