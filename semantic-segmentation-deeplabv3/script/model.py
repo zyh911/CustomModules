@@ -1,7 +1,5 @@
-import os
 import sys
 
-import torch
 import torch.nn as nn
 from torchvision.models.segmentation.segmentation import _segm_resnet, model_urls
 try:
