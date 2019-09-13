@@ -29,6 +29,7 @@ class SegmentationMetric(object):
     def update(self, preds, labels):
         """
         Updates the internal evaluation result.
+
         Parameters
         ----------
         labels : 'NumpyArray' or list of `NumpyArray`
@@ -45,6 +46,7 @@ class SegmentationMetric(object):
     def get(self):
         """
         Gets the current evaluation result.
+
         Returns
         -------
         metrics : tuple of float

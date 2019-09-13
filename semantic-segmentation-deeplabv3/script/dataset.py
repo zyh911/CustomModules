@@ -93,6 +93,7 @@ class SegmentationDataset(object):
 class VOCSegmentation(SegmentationDataset):
     """
     Pascal VOC Semantic Segmentation Dataset.
+
     Parameters
     ----------
     root : string
