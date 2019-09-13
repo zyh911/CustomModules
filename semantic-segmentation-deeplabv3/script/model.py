@@ -15,13 +15,15 @@ def load_model(arch_type, backbone, model_path, pretrained, num_classes, **kwarg
     aux_loss = True
     temp_arch_type = arch_type
     if temp_arch_type == 'deeplabv3':
-        temp_arch_type = temp_arch_type[:-2]
+        temp_arch_type = 'deeplab'
     model = _segm_resnet(temp_arch_type, backbone, num_classes, aux_loss, **kwargs)
     if pretrained:
         arch = arch_type + '_' + backbone + '_coco'
+        if arch not in model_urls:
+            raise NotImplementedError('pretrained {} is not supported'.format(arch))
         model_url = model_urls[arch]
         if model_url is None:
-            raise NotImplementedError('pretrained {} is not supported as of now'.format(arch))
+            raise NotImplementedError('pretrained {} will be supported soon'.format(arch))
         else:
             state_dict = load_state_dict_from_url(model_url, model_dir=model_path)
             model.load_state_dict(state_dict)
