@@ -9,6 +9,11 @@ __all__ = ['SegmentationMetric', 'batch_pix_accuracy', 'batch_intersection_union
 class SegmentationMetric(object):
     """
     Computes pixAcc and mIoU metric scores
+
+    Parameters
+    ----------
+    nclass : int
+        number of class labels
     """
     def __init__(self, nclass):
         super(SegmentationMetric, self).__init__()

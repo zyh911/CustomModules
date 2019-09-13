@@ -6,7 +6,18 @@ import torch
 
 
 class SegmentationDataset(object):
-    """Segmentation Base Dataset"""
+    """
+    Segmentation Base Dataset
+
+    Parameters
+    ----------
+    root : string
+        Path to dataset folder
+    split: string
+        'train', 'val' or 'test'
+    transform : callable, optional
+        A function that transforms the image
+    """
     def __init__(self, root, split, mode, transform, base_size=520, crop_size=480):
         super(SegmentationDataset, self).__init__()
         self.root = root
