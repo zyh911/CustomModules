@@ -20,10 +20,10 @@ def load_model(arch_type, backbone, model_path, pretrained, num_classes, **kwarg
     if pretrained:
         arch = arch_type + '_' + backbone + '_coco'
         if arch not in model_urls:
-            raise NotImplementedError('pretrained {} is not supported'.format(arch))
+            raise KeyError('{} is not supported'.format(arch))
         model_url = model_urls[arch]
         if model_url is None:
-            raise NotImplementedError('pretrained {} will be supported soon'.format(arch))
+            raise NotImplementedError('pretrained {} will be supported soon, but not for now'.format(arch))
         else:
             state_dict = load_state_dict_from_url(model_url, model_dir=model_path)
             model.load_state_dict(state_dict)
