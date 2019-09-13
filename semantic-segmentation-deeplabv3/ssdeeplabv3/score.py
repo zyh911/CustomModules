@@ -18,6 +18,7 @@ from .smt_fake import smt_fake_file
 
 class Score:
     def __init__(self, model_path, meta={}):
+        # 21 colors to paint
         self.pallete = [
             [255, 255, 255],
             [128, 64, 128],
