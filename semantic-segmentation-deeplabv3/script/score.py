@@ -55,6 +55,15 @@ class Score:
 
         self.model.eval()
 
+    def image_to_string(self, image):
+        imgByteArr = BytesIO()
+        image.save(imgByteArr, format='PNG')
+        imgBytes = imgByteArr.getvalue()
+        s = base64.b64encode(imgBytes)
+        s = s.decode('ascii')
+        s = 'data:image/png;base64,' + s
+        return s
+
     def run(self, input, meta=None):
         my_list = []
         for i in range(input.shape[0]):
@@ -77,21 +86,9 @@ class Score:
                     resultImg[output_predictions == idx] = self.pallete[idx]
 
                 resultImg1 = Image.fromarray(resultImg).resize(img.size)
-                # resultImg1.save(os.path.join('script/outputs2', '{}_mask.png'.format(i)))
                 resultImg2 = Image.blend(img, resultImg1, 0.5)
-                # resultImg2.save(os.path.join('script/outputs2', '{}_fusion.png'.format(i)))
-                imgByteArr1 = BytesIO()
-                imgByteArr2 = BytesIO()
-                resultImg1.save(imgByteArr1, format='PNG')
-                imgBytes1 = imgByteArr1.getvalue()
-                s1 = base64.b64encode(imgBytes1)
-                s1 = s1.decode('ascii')
-                resultImg2.save(imgByteArr2, format='PNG')
-                imgBytes2 = imgByteArr2.getvalue()
-                s2 = base64.b64encode(imgBytes2)
-                s2 = s2.decode('ascii')
-                s1 = 'data:image/png;base64,' + s1
-                s2 = 'data:image/png;base64,' + s2
+                s1 = self.image_to_string(resultImg1)
+                s2 = self.image_to_string(resultImg2)
 
             my_list.append([s1, s2])
         df = pd.DataFrame(my_list, columns=['mask', 'fusion'])
