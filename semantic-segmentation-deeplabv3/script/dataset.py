@@ -2,13 +2,11 @@ import os
 import random
 import numpy as np
 from PIL import Image, ImageOps, ImageFilter
-
 import torch
 
 
 class SegmentationDataset(object):
     """Segmentation Base Dataset"""
-
     def __init__(self, root, split, mode, transform, base_size=520, crop_size=480):
         super(SegmentationDataset, self).__init__()
         self.root = root
@@ -93,7 +91,8 @@ class SegmentationDataset(object):
 
 
 class VOCSegmentation(SegmentationDataset):
-    """Pascal VOC Semantic Segmentation Dataset.
+    """
+    Pascal VOC Semantic Segmentation Dataset.
     Parameters
     ----------
     root : string
@@ -136,7 +135,6 @@ class VOCSegmentation(SegmentationDataset):
             _split_f = os.path.join(_splits_dir, 'test.txt')
         else:
             raise RuntimeError('Unknown dataset split.')
-
         self.images = []
         self.masks = []
         with open(os.path.join(_split_f), "r") as lines:
@@ -148,7 +146,6 @@ class VOCSegmentation(SegmentationDataset):
                     _mask = os.path.join(_mask_dir, line.rstrip('\n') + ".png")
                     assert os.path.isfile(_mask)
                     self.masks.append(_mask)
-
         if split != 'test':
             assert (len(self.images) == len(self.masks))
         print('Found {} images in the folder {}'.format(len(self.images), _voc_root))
@@ -172,7 +169,6 @@ class VOCSegmentation(SegmentationDataset):
         # general resize, normalize and toTensor
         if self.transform is not None:
             img = self.transform(img)
-
         return img, mask  # , os.path.basename(self.images[index])
 
     def __len__(self):

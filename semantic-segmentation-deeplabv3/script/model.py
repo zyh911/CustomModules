@@ -1,5 +1,4 @@
 import sys
-
 import torch.nn as nn
 from torchvision.models.segmentation.segmentation import _segm_resnet, model_urls
 try:
@@ -31,7 +30,6 @@ def load_model(arch_type, backbone, model_path, pretrained, num_classes, **kwarg
 
 
 class SegmentationFuncs:
-
     @staticmethod
     def fcn_resnet50(model_path='script/saved_model', pretrained=False,
                      num_classes=21, **kwargs):
@@ -57,11 +55,9 @@ class SegmentationNet(nn.Module):
     def __init__(self, model_type='deeplabv3_resnet101', model_path=None, pretrained=True, num_classes=21):
         super().__init__()
         net_func = getattr(SegmentationFuncs, model_type, None)
-
         if net_func is None:
             print(f'Error: No such pretrained model {model_type}')
             sys.exit()
-
         self.model = net_func(pretrained=pretrained, model_path=model_path, num_classes=num_classes)
 
     def forward(self, input):

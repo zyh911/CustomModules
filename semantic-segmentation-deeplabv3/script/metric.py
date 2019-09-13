@@ -10,7 +10,6 @@ class SegmentationMetric(object):
     """
     Computes pixAcc and mIoU metric scores
     """
-
     def __init__(self, nclass):
         super(SegmentationMetric, self).__init__()
         self.nclass = nclass
@@ -19,7 +18,6 @@ class SegmentationMetric(object):
     def evaluate_worker(self, pred, label):
         correct, labeled = batch_pix_accuracy(pred, label)
         inter, union = batch_intersection_union(pred, label, self.nclass)
-
         self.total_correct += correct
         self.total_label += labeled
         if self.total_inter.device != inter.device:
@@ -29,7 +27,8 @@ class SegmentationMetric(object):
         self.total_union += union
 
     def update(self, preds, labels):
-        """Updates the internal evaluation result.
+        """
+        Updates the internal evaluation result.
         Parameters
         ----------
         labels : 'NumpyArray' or list of `NumpyArray`
@@ -37,7 +36,6 @@ class SegmentationMetric(object):
         preds : 'NumpyArray' or list of `NumpyArray`
             Predicted values.
         """
-
         if isinstance(preds, torch.Tensor):
             self.evaluate_worker(preds, labels)
         elif isinstance(preds, (list, tuple)):
@@ -45,7 +43,8 @@ class SegmentationMetric(object):
                 self.evaluate_worker(pred, label)
 
     def get(self):
-        """Gets the current evaluation result.
+        """
+        Gets the current evaluation result.
         Returns
         -------
         metrics : tuple of float
@@ -70,7 +69,6 @@ def batch_pix_accuracy(output, target):
     # inputs are numpy array, output 4D, target 3D
     predict = torch.argmax(output.long(), 1) + 1
     target = target.long() + 1
-
     pixel_labeled = torch.sum(target > 0).item()
     pixel_correct = torch.sum((predict == target) * (target > 0)).item()
     assert pixel_correct <= pixel_labeled, "Correct area should be smaller than Labeled"
@@ -85,7 +83,6 @@ def batch_intersection_union(output, target, nclass):
     nbins = nclass
     predict = torch.argmax(output, 1) + 1
     target = target.float() + 1
-
     predict = predict.float() * (target > 0).float()
     intersection = predict * (predict == target).float()
     # areas of intersection and union
@@ -112,7 +109,7 @@ def pixelAccuracy(imPred, imLab):
     pixel_labeled = np.sum(imLab >= 0)
     pixel_correct = np.sum((imPred == imLab) * (imLab >= 0))
     pixel_accuracy = 1.0 * pixel_correct / pixel_labeled
-    return (pixel_accuracy, pixel_correct, pixel_labeled)
+    return pixel_accuracy, pixel_correct, pixel_labeled
 
 
 def intersectionAndUnion(imPred, imLab, numClass):
@@ -127,11 +124,9 @@ def intersectionAndUnion(imPred, imLab, numClass):
     # Remove classes from unlabeled pixels in gt image.
     # We should not penalize detections in unlabeled portions of the image.
     imPred = imPred * (imLab >= 0)
-
     # Compute area intersection:
     intersection = imPred * (imPred == imLab)
     (area_intersection, _) = np.histogram(intersection, bins=numClass, range=(1, numClass))
-
     # Compute area union:
     (area_pred, _) = np.histogram(imPred, bins=numClass, range=(1, numClass))
     (area_lab, _) = np.histogram(imLab, bins=numClass, range=(1, numClass))
@@ -144,7 +139,6 @@ def hist_info(pred, label, num_cls):
     k = (label >= 0) & (label < num_cls)
     labeled = np.sum(k)
     correct = np.sum((pred[k] == label[k]))
-
     return np.bincount(num_cls * label[k].astype(int) + pred[k],
                        minlength=num_cls ** 2).reshape(num_cls, num_cls), labeled, correct
 
@@ -156,5 +150,4 @@ def compute_score(hist, correct, labeled):
     freq = hist.sum(1) / hist.sum()
     freq_IU = (iu[freq > 0] * freq[freq > 0]).sum()
     mean_pixel_acc = correct / labeled
-
     return iu, mean_IU, mean_IU_no_back, freq_IU, mean_pixel_acc
