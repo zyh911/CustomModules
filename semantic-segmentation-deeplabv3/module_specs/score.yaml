@@ -51,7 +51,7 @@ implementation:
     command:
     - python
     - -m
-    - script.score
+    - ssdeeplabv3.score
     args:
     - --model_type
     - inputValue: Model type
@@ -64,6 +64,6 @@ implementation:
     - --save_path
     - outputPath: Save path
   invoking:
-    module: script.score
+    module: ssdeeplabv3.score
     class: Score
     func: run

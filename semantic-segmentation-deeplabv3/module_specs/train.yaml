@@ -62,7 +62,7 @@ implementation:
     command:
     - python
     - -m
-    - script.train
+    - ssdeeplabv3.train
     args:
     - --model_type
     - inputValue: Model type
