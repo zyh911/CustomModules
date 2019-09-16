@@ -65,15 +65,18 @@ class Score:
         s = 'data:image/png;base64,' + s
         return s
 
+    def decode_image_str(self, input_str):
+        if input_str.startswith('data:'):
+            my_index = input_str.find('base64,')
+            input_str = input_str[my_index + 7:]
+        temp = base64.b64decode(input_str)
+        img = Image.open(BytesIO(temp))
+        return img
+
     def run(self, input, meta=None):
         my_list = []
         for i in range(input.shape[0]):
-            temp_string = input.iloc[i]['image_string']
-            if temp_string.startswith('data:'):
-                my_index = temp_string.find('base64,')
-                temp_string = temp_string[my_index+7:]
-            temp = base64.b64decode(temp_string)
-            img = Image.open(BytesIO(temp))
+            img = self.decode_image_str(input.iloc[i]['image_string'])
             input_tensor = self.inference_transforms(img)
             input_tensor = input_tensor.unsqueeze(0)
             if torch.cuda.is_available():
