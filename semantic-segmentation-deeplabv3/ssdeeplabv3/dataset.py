@@ -1,8 +1,12 @@
 import os
+import logging
 import random
 import numpy as np
 from PIL import Image, ImageOps, ImageFilter
 import torch
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+                    datefmt='%d-%M-%Y %H:%M:%S', level=logging.INFO)
 
 
 class SegmentationDataset(object):
@@ -160,7 +164,7 @@ class VOCSegmentation(SegmentationDataset):
                     self.masks.append(_mask)
         if split != 'test':
             assert (len(self.images) == len(self.masks))
-        print('Found {} images in the folder {}'.format(len(self.images), _voc_root))
+        logging.info('Found {} images in the folder {}'.format(len(self.images), _voc_root))
 
     def __getitem__(self, index):
         img = Image.open(self.images[index]).convert('RGB')

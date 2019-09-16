@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import logging
 from PIL import Image
 from io import BytesIO
 from argparse import ArgumentParser
@@ -14,6 +15,9 @@ import torch
 from torchvision import transforms
 from .model import SegmentationNet
 from .smt_fake import smt_fake_file
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+                    datefmt='%d-%M-%Y %H:%M:%S', level=logging.INFO)
 
 
 class Score:
@@ -107,9 +111,9 @@ def test(args):
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--model_type', default='deeplabv3_resnet101', help='Model type')
-    parser.add_argument('--model_path', default='script/saved_model', help='Model directory')
-    parser.add_argument('--data_path', default='script/outputs', help='Data directory')
-    parser.add_argument('--save_path', default='script/outputs2', help='directory to save the results')
+    parser.add_argument('--model_path', default='ssdeeplabv3/saved_model', help='Model directory')
+    parser.add_argument('--data_path', default='ssdeeplabv3/outputs', help='Data directory')
+    parser.add_argument('--save_path', default='ssdeeplabv3/outputs2', help='directory to save the results')
     parser.add_argument('--use_cuda', default=False, help='if use cuda')
     test(parser.parse_args())
-    print('This experiment has been completed.')
+    logging.info('This experiment has been completed.')

@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 import fire
 import torch
 from torchvision import transforms
@@ -7,6 +8,9 @@ from .dataset import VOCSegmentation
 from .metric import SegmentationMetric
 from .model import SegmentationNet
 from .smt_fake import smt_fake_model
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+                    datefmt='%d-%M-%Y %H:%M:%S', level=logging.INFO)
 
 
 def val(model, val_loader, use_cuda, metric):
@@ -22,10 +26,10 @@ def val(model, val_loader, use_cuda, metric):
             output = model(input)
         metric.update(output['out'], target)
         pixAcc, mIoU = metric.get()
-        print('Validation || current iteration / total iterations : [{} / {}], time : {:.2f}, '
-              'epoch pixAcc: {:.3f}, epoch mIoU: {:.3f}'.format(i + 1, total_iteration,
-                                                                time.time() - start_time,
-                                                                pixAcc, mIoU))
+        logging.info('Validation || current iteration / total iterations : [{} / {}], time : {:.2f}, '
+                     'epoch pixAcc: {:.3f}, epoch mIoU: {:.3f}'.format(i + 1, total_iteration,
+                                                                       time.time() - start_time,
+                                                                       pixAcc, mIoU))
     return pixAcc, mIoU
 
 
@@ -44,17 +48,17 @@ def train(model, criteria, train_loader, optimizer, use_cuda):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        print('Train || current iteration / total iterations : [{} / {}], '
-              'time : {:.2f}, loss : {:.4f}, '
-              'epoch loss: {:.4f}'.format(i + 1, total_iteration,
-                                          time.time() - start_time,
-                                          loss.data.item(),
-                                          total_loss / (i + 1)))
+        logging.info('Train || current iteration / total iterations : [{} / {}], '
+                     'time : {:.2f}, loss : {:.4f}, '
+                     'epoch loss: {:.4f}'.format(i + 1, total_iteration,
+                                                 time.time() - start_time,
+                                                 loss.data.item(),
+                                                 total_loss / (i + 1)))
     return total_loss / total_iteration
 
 
-def entrance(model_type='deeplabv3_resnet101', model_path='script/saved_model',
-             data_path='script/dataset/VOCdevkit', save_path='script/saved_model', pretrained=True,
+def entrance(model_type='deeplabv3_resnet101', model_path='ssdeeplabv3/saved_model',
+             data_path='ssdeeplabv3/dataset/VOCdevkit', save_path='ssdeeplabv3/saved_model', pretrained=True,
              learning_rate=0.0001, epochs=50, batch_size=4, use_cuda=False):
     # image transform
     input_transform = transforms.Compose([
@@ -84,7 +88,7 @@ def entrance(model_type='deeplabv3_resnet101', model_path='script/saved_model',
     mIoU_list = []
     for epoch in range(epochs):
         scheduler.step()
-        print('current epoch / total epochs : [{} / {}]'.format(epoch + 1, epochs))
+        logging.info('current epoch / total epochs : [{} / {}]'.format(epoch + 1, epochs))
         loss = train(model, criteria, train_loader, optimizer, use_cuda)
         pixAcc, mIoU = val(model, val_loader, use_cuda, metric)
         with open(os.path.join(save_path, 'log.csv'), 'a') as f:
@@ -93,10 +97,10 @@ def entrance(model_type='deeplabv3_resnet101', model_path='script/saved_model',
         torch.save(model.state_dict(), os.path.join(save_path, 'model.pth'))
         mIoU_list.append(mIoU)
         if len(mIoU_list) > 2 and mIoU_list[-1] < mIoU_list[-2] < mIoU_list[-3]:
-            print('Validation loss did not descend any more. Stop here.')
+            logging.info('Validation loss did not descend any more. Stop here.')
             break
     smt_fake_model(save_path)
-    print('This experiment has been completed.')
+    logging.info('This experiment has been completed.')
 
 
 if __name__ == '__main__':
