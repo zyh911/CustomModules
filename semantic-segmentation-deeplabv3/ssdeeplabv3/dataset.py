@@ -136,8 +136,16 @@ class VOCSegmentation(SegmentationDataset):
     BASE_DIR = 'VOC2012'
     NUM_CLASS = 21
 
-    def __init__(self, root='script/dataset/VOCdevkit', split='train', mode=None, transform=None, **kwargs):
+    def __init__(self, root='script/dataset/VOCdevkit', split='train', mode=None, transform=None, class_names=None,
+                 **kwargs):
         super(VOCSegmentation, self).__init__(root, split, mode, transform, **kwargs)
+        if class_names is None:
+            self.classes = ('background', 'airplane', 'bicycle', 'bird', 'boat', 'bottle',
+                            'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse',
+                            'motorcycle', 'person', 'potted-plant', 'sheep', 'sofa', 'train',
+                            'tv')
+        else:
+            self.classes = tuple(class_names)
         _voc_root = os.path.join(root, self.BASE_DIR)
         _mask_dir = os.path.join(_voc_root, 'SegmentationClass')
         _image_dir = os.path.join(_voc_root, 'JPEGImages')
@@ -194,14 +202,6 @@ class VOCSegmentation(SegmentationDataset):
         target = np.array(mask).astype('int32')
         target[target == 255] = -1
         return torch.from_numpy(target).long()
-
-    @property
-    def classes(self):
-        """Category names."""
-        return ('background', 'airplane', 'bicycle', 'bird', 'boat', 'bottle',
-                'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse',
-                'motorcycle', 'person', 'potted-plant', 'sheep', 'sofa', 'train',
-                'tv')
 
 
 if __name__ == '__main__':
