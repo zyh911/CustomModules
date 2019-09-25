@@ -52,7 +52,7 @@ class Score:
         ])
         self.model = SegmentationNet(model_type=meta['Model type'], model_path=model_path, pretrained=False)
         self.model.load_state_dict(torch.load(os.path.join(model_path, 'model.pth'), map_location='cpu'))
-        if meta['Use CUDA'] and torch.cuda.is_available():
+        if meta['Use CUDA'] == 'True' and torch.cuda.is_available():
             self.model = self.model.cuda()
         self.model.eval()
 
@@ -105,7 +105,7 @@ class Score:
 
 
 def test(args):
-    meta = {'Model type': args.model_type, 'Use CUDA': args.use_cuda}
+    meta = {'Model type': str(args.model_type), 'Use CUDA': str(args.use_cuda)}
     score = Score(args.model_path, meta)
     score.inference(data_path=args.data_path, save_path=args.save_path)
     smt_fake_file(args.save_path)
