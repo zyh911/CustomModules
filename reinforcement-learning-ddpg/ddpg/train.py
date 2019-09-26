@@ -141,6 +141,7 @@ def train(environment_name='Pendulum-v0', save_path='ddpg/saved_model', batch_si
     trainer = Trainer(s_dim, a_dim, a_max, ram, learning_rate, gamma)
     best_reward = 0
     has_saved_model = False
+    os.makedirs(save_path, exist_ok=True)
     with open(os.path.join(save_path, 'log.csv'), 'w') as f:
         f.write('Episode,Reward\n')
     for _ep in range(max_episodes):
