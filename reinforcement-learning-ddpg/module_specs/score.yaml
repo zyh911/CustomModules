@@ -12,7 +12,7 @@ inputs:
     - 'BipedalWalker-v2'
 - name: Gamma
   type: Float
-  defalut: 0.99
+  default: 0.99
   description: gamma
 - name: Validation times
   type: Int
