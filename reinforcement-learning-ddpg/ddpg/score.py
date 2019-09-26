@@ -29,7 +29,7 @@ class Score:
         self.actor.eval()
 
     def run(self, meta=None):
-        my_list = [self.validation_times, self.gamma]
+        my_list = [[self.validation_times, self.gamma]]
         max_steps = 5000
         total_temp_reward = 0
         for i in range(self.validation_times):
@@ -48,7 +48,7 @@ class Score:
                     break
             total_temp_reward += temp_reward
         total_temp_reward /= self.validation_times
-        my_list.append(total_temp_reward)
+        my_list[0].append(total_temp_reward)
         logging.info('Validation times: {}, Gamma: {}, Mean reward: {}'.format(self.validation_times,
                                                                                self.gamma, total_temp_reward))
         df = pd.DataFrame(my_list, columns=['Validation times', 'Gamma', 'Mean reward'])
