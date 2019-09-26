@@ -18,7 +18,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
 
 class Score:
     def __init__(self, model_path, meta={}):
-        self.env = gym.make(meta['Environment_name'])
+        self.env = gym.make(meta['Environment name'])
         self.gamma = float(meta['Gamma'])
         self.validation_times = int(meta['Validation times'])
         s_dim = self.env.observation_space.shape[0]
